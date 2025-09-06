@@ -1,26 +1,22 @@
 ---
 import { getCollection } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
-import readingTime from 'reading-time'; // Thêm import này nếu chưa có
+import readingTime from 'reading-time'; 
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
   
-  // Sort entries by date for better next/prev navigation
   const sortedEntries = [...blogEntries].sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
   );
   
   return sortedEntries.map((entry, index) => {
-    // Tính toán readingTime từ nội dung markdown
     const readingTimeResult = readingTime(entry.body);
     
-    // Định dạng thời gian đọc thành chuỗi dễ đọc
     let readingTimeStr;
     if (readingTimeResult.minutes < 1) {
       readingTimeStr = 'Dưới 1 phút đọc';
     } else {
-      // Làm tròn lên và định dạng thành "X phút đọc"
       const minutes = Math.ceil(readingTimeResult.minutes);
       readingTimeStr = `${minutes} phút đọc`;
     }
@@ -29,8 +25,8 @@ export async function getStaticPaths() {
       params: { slug: entry.slug },
       props: { 
         entry,
-        readingTimeValue: readingTimeStr, // Truyền chuỗi đã định dạng
-        readingTimeStats: readingTimeResult, // Truyền toàn bộ thông tin thống kê
+        readingTimeValue: readingTimeStr, 
+        readingTimeStats: readingTimeResult,
         nextPost: index > 0 ? sortedEntries[index - 1] : null,
         prevPost: index < sortedEntries.length - 1 ? sortedEntries[index + 1] : null
       },
@@ -41,18 +37,15 @@ export async function getStaticPaths() {
 const { entry, nextPost, prevPost, readingTimeValue, readingTimeStats } = Astro.props;
 const { Content } = await entry.render();
 
-// Ghi đè readingTime từ frontmatter nếu có, nếu không thì sử dụng giá trị đã tính
 const finalReadingTime = entry.data.readingTime || readingTimeValue;
 ---
 
 
 <BlogPost {...entry.data} readingTime={finalReadingTime}>
-    <!-- Main Content - Enhanced with better typography and spacing -->
     <div class="prose prose-zinc dark:prose-invert max-w-none prose-headings:scroll-mt-24 prose-headings:font-semibold prose-a:text-zinc-800 dark:prose-a:text-zinc-300 prose-a:font-medium prose-a:underline-offset-4 hover:prose-a:text-zinc-600 dark:hover:prose-a:text-zinc-100 prose-img:rounded-xl sm:prose-base prose-sm">
       <Content />
     </div>
 
-    <!-- Next/Previous Navigation - Improved responsive design -->
     <div class="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 border-t border-zinc-200 dark:border-zinc-800 pt-8 sm:pt-12">
       {prevPost && (
         <a 

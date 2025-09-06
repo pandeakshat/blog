@@ -2,7 +2,7 @@
 title: Mistakes of a Programmer
 description: Mistakes of a Programmer
 pubDate: 2023-10-18
-heroImage: "1-mistakes-of-a-programmer.webp"
+heroImage: '/images/mistakes-of-a-programmer.png'
 readingTime: 5 min read
 tags:
   - programming
